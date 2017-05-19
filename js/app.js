@@ -4,8 +4,8 @@ var Enemy = function() {
     // 我们已经提供了一个来帮助你实现更多
 
     // 敌人的图片或者雪碧图，用一个我们提供的工具函数来轻松的加载文件
-    this.x = 50;
-    this.y = 50;
+    this.x = 0;
+    this.y = 60;
     this.sprite = 'images/enemy-bug.png';
 };
 
@@ -23,14 +23,55 @@ Enemy.prototype.render = function() {
 
 // 现在实现你自己的玩家类
 // 这个类需要一个 update() 函数， render() 函数和一个 handleInput()函数
-var Player = function(){
-
+var Player = function() {
+    this.x = 202;
+    this.y = 392;
     this.sprite = 'images/char-boy.png';
 };
 
 Player.prototype = Object.create(Enemy.prototype);
 Player.prototype.constructor = player;
-Player.prototype.handleInput = function(getInput){};
+Player.prototype.update = function() {
+}
+Player.prototype.handleInput = function(getInput) {
+    //判斷是否超出移動邊界
+    switch (getInput)
+    {
+        case 'left':
+            if(this.x > 0) {
+                this.x -= 101;
+        }
+            break;
+
+        case 'right':
+            if(this.x < 404) {
+                this.x += 101;
+        }
+            break;
+
+        case 'up':
+            if(this.y === 60) {
+                win();
+        }
+            if(this.y > 60) {
+                this.y -= 83;
+        }
+            break;
+
+        case 'down':
+            if(this.y < 392) {
+                this.y += 83;
+        }
+            break;
+    }
+};
+
+//勝利函數
+var Win = function() {
+
+};
+
+
 // 现在实例化你的所有对象
 // 把所有敌人的对象都放进一个叫 allEnemies 的数组里面
 // 把玩家对象放进一个叫 player 的变量里面
