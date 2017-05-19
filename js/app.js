@@ -5,7 +5,7 @@ var Enemy = function() {
     this.column = Math.round((Math.random()*10)/4);
     this.speed = Math.round(Math.random()*1000);
     // 敌人的图片或者雪碧图，用一个我们提供的工具函数来轻松的加载文件
-    this.x = 0;
+    this.x = -50;
     this.y = 60 + (this.column*83);
 
     this.sprite = 'images/enemy-bug.png';
@@ -17,8 +17,23 @@ Enemy.prototype.update = function(dt) {
     // 你应该给每一次的移动都乘以 dt 参数，以此来保证游戏在所有的电脑上
     // 都是以同样的速度运行的
     this.x += this.speed * dt;
+    //判斷是否超出邊界，超出後將位置移回左邊，並且隨機生在其他列。
+    if(this.x > 606) {
+        this.column = Math.round((Math.random()*10)/4);
+        this.y = 60 + (this.column*83);
+        this.x = -50;
+    }
 };
-//Enemy.prototype.checkCollision 
+Enemy.prototype.Collisions = function() {
+    //判斷是否與玩家的座標同，是的話將玩家移動至原點
+    if(this.y === player.y) {
+        if(Math.abs(this.x - player.x) < 75)
+        {
+            player.x = 202;
+            player.y = 392;
+        }
+    }
+};
 
 // 此为游戏必须的函数，用来在屏幕上画出敌人，
 Enemy.prototype.render = function() {
@@ -33,7 +48,9 @@ var Player = function() {
     this.sprite = 'images/char-boy.png';
 };
 
+//將玩家的原型委託至敵人的原型
 Player.prototype = Object.create(Enemy.prototype);
+//更改玩家的constructor
 Player.prototype.constructor = player;
 Player.prototype.update = function() {
 }
