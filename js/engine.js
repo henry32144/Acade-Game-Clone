@@ -9,6 +9,9 @@
  * 这个引擎是可以通过 Engine 变量公开访问的，而且它也让 canvas context (ctx) 对象也可以
  * 公开访问，以此使编写app.js的时候更加容易
  */
+ 
+ //定義分數相關的全域變數方便給app.js
+var addPoints,showPoints;
 
 var Engine = (function(global) {
     /* 实现定义我们会在这个作用于用到的变量
@@ -21,10 +24,23 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+    Points = 0;
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+    //設置文字樣式
+    ctx.font = "32pt Impact";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.linewidth = 3;
 
+
+
+    function menu() {      
+
+    }
+    
     /* 这个函数是整个游戏的主入口，负责适当的调用 update / render 函数 */
     function main() {
         /* 如果你想要更平滑的动画过度就需要获取时间间隙。因为每个人的电脑处理指令的
@@ -56,6 +72,7 @@ var Engine = (function(global) {
         reset();
         lastTime = Date.now();
         main();
+        showPoints();
     }
 
     /* 这个函数被 main 函数（我们的游戏主循环）调用，它本身调用所有的需要更新游戏角色
@@ -72,6 +89,9 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.Collisions();
         });
+        allGems.forEach(function(gem) {
+            gem.getPoints();
+        });
     }
 
     /* 这个函数会遍历在 app.js 定义的存放所有敌人实例的数组，并且调用他们的 update()
@@ -81,6 +101,9 @@ var Engine = (function(global) {
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
+        });
+        allGems.forEach(function(gem) {
+            gem.update();
         });
         player.update();
     }
@@ -126,8 +149,35 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
+        allGems.forEach(function(gems) {
+            gems.render();
+        });
+        player.render()
+    }
 
-        player.render();
+    //得到寶石後會調用這個函數來進行加分
+    addPoints = function(gemType) {
+        //判斷寶石種類
+            switch (gemType)
+        {
+            case 0:
+                Points += 100;
+                break;
+            case 1:
+                Points += 200;
+                break;
+            case 2:
+                Points += 300;
+                break;
+        }
+    }
+
+    //更新分數文字
+    showPoints = function() {
+        //先畫一塊白色長方形來把之前的文字覆蓋掉，避免重疊
+        ctx.fillRect(0,0,505,45);
+        ctx.fillText("Score : " + Points , canvas.width / 2 , 40);
+        ctx.strokeText("Score : " + Points , canvas.width / 2 , 40);
     }
 
     /* 这个函数现在没干任何事，但是这会是一个好地方让你来处理游戏重置的逻辑。可能是一个
@@ -145,6 +195,9 @@ var Engine = (function(global) {
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
+        'images/Gem-Blue.png',
+        'images/Gem-Green.png',
+        'images/Gem-Orange.png',
         'images/enemy-bug.png',
         'images/char-boy.png'
     ]);
@@ -154,4 +207,5 @@ var Engine = (function(global) {
      * 对象。从而开发者就可以在他们的app.js文件里面更容易的使用它。
      */
     global.ctx = ctx;
+    
 })(this);
