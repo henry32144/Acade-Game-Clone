@@ -161,12 +161,15 @@ var Engine = (function(global) {
         //判斷寶石種類
             switch (gemType)
         {
+            //藍色的寶石加100分
             case 0:
                 Points += 100;
                 break;
+            //綠色的寶石加200分
             case 1:
                 Points += 200;
                 break;
+            //橘色的寶石加300分
             case 2:
                 Points += 300;
                 break;
