@@ -30,8 +30,7 @@ Enemy.prototype.Collisions = function() {
     if(this.y === player.y) {
         if(Math.abs(this.x - player.x) < 75)
         {
-            player.x = 202;
-            player.y = 392;
+            replacePlayer();
         }
     }
 };
@@ -47,6 +46,12 @@ var Player = function() {
     this.x = 202;
     this.y = 392;
     this.sprite = 'images/char-boy.png';
+};
+
+//重置玩家位置
+var replacePlayer = function() {
+    player.x = 202;
+    player.y = 392;
 };
 
 //將玩家的原型委託至敵人的原型
@@ -75,9 +80,10 @@ Player.prototype.handleInput = function(getInput) {
         }
             break;
 
+        //判斷如果下一層就是河流，就執行過河的函數
         case 'up':
             if(this.y === 60) {
-                win();
+                cross();
         }
             if(this.y > 60) {
                 this.y -= 83;
@@ -115,10 +121,11 @@ var Gem = function() {
 
 //寶石的原型設定
 Gem.prototype = Object.create(Enemy.prototype);
-Gem.prototype.constructor = gems;
+Gem.prototype.constructor = allGems;
 Gem.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
 //寶石的取得判定
 Gem.prototype.getPoints = function() {
     //判斷是否與玩家的座標相同，是的話加分，並將寶石移走
@@ -135,13 +142,15 @@ Gem.prototype.getPoints = function() {
 Gem.prototype.update = function() {
 }
 
-
-//勝利函數
-var Win = function() {
-
+//過河函數
+var cross = function() {
+    crossTimes += 1;
+    Points += 500;
+    showPoints();
+    replacePlayer();
+    deleteGems();
+    generateGems();
 };
-
-
 
 // 现在实例化你的所有对象
 // 把所有敌人的对象都放进一个叫 allEnemies 的数组里面
@@ -160,12 +169,27 @@ var player = new Player();
 
 //實例寶石
 var allGems = [];
-for(var i = 0; i< 4 ; i++)
-{
-    //隨機寶石種類
-    var gems = new Gem();
-    allGems.push(gems);
-}
+
+//生成寶石的函數
+var generateGems = function() {
+    for(var i = 0; i< 4 ; i++)
+    {
+        //隨機寶石種類
+        var gems = new Gem();
+        allGems.push(gems);
+    }
+};
+
+//首次生成寶石
+generateGems();
+
+//刪除寶石
+var deleteGems = function() {
+    for(var i = 0; i< 4 ; i++)
+    {
+        allGems.pop(i);
+    }
+};
 
 // 这段代码监听游戏玩家的键盘点击事件并且代表将按键的关键数字送到 Play.handleInput()
 // 方法里面。你不需要再更改这段代码了。

@@ -13,6 +13,9 @@
  //定義分數相關的全域變數方便給app.js
 var addPoints,showPoints;
 
+//計算過河的次數
+var crossTimes = 0;
+
 var Engine = (function(global) {
     /* 实现定义我们会在这个作用于用到的变量
      * 创建 canvas 元素，拿到对应的 2D 上下文
@@ -24,12 +27,14 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+    //初始化分數
     Points = 0;
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+
     //設置文字樣式
-    ctx.font = "32pt Impact";
+    ctx.font = "28pt Impact";
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
@@ -37,10 +42,6 @@ var Engine = (function(global) {
 
 
 
-    function menu() {      
-
-    }
-    
     /* 这个函数是整个游戏的主入口，负责适当的调用 update / render 函数 */
     function main() {
         /* 如果你想要更平滑的动画过度就需要获取时间间隙。因为每个人的电脑处理指令的
@@ -175,9 +176,11 @@ var Engine = (function(global) {
     //更新分數文字
     showPoints = function() {
         //先畫一塊白色長方形來把之前的文字覆蓋掉，避免重疊
-        ctx.fillRect(0,0,505,45);
-        ctx.fillText("Score : " + Points , canvas.width / 2 , 40);
-        ctx.strokeText("Score : " + Points , canvas.width / 2 , 40);
+        ctx.fillRect(0, 0 , 505,45);
+        ctx.fillText("Score : " + Points , (canvas.width / 3) * 2 , 40);
+        ctx.strokeText("Score : " + Points , (canvas.width / 3) * 2 , 40);
+        ctx.fillText("Cross : " + crossTimes , (canvas.width / 4) , 40);
+        ctx.strokeText("Cross : " + crossTimes , (canvas.width / 4) , 40);
     }
 
     /* 这个函数现在没干任何事，但是这会是一个好地方让你来处理游戏重置的逻辑。可能是一个
