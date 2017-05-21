@@ -103,10 +103,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        allGems.forEach(function(gem) {
-            gem.update();
-        });
-        player.update();
+
     }
 
     /* 这个函数做了一些游戏的初始渲染，然后调用 renderEntities 函数。记住，这个函数

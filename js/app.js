@@ -1,15 +1,35 @@
+//定義一些常用的位置變量
+var coordinates = {
+    origin_X : 202,  //玩家重生點座標x
+    origin_Y : 392,  //玩家重生點座標y
+    horizontal_Step : 101, //步伐
+    vertical_Step : 83,
+    border_Left : 0,    //  邊界
+    border_Right : 404,
+    border_Up : 60,
+    border_Bottom : 392
+};
+
+//定義一個遊戲物件讓其他物件可以調用原型
+var GameObject = function() {
+};
+
+// 此为游戏必须的函数，用来在屏幕上画出物體，
+GameObject.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
 // 这是我们的玩家要躲避的敌人 
 var Enemy = function() {
     // 要应用到每个敌人的实例的变量写在这里
     // 我们已经提供了一个来帮助你实现更多
-    this.column = Math.round((Math.random()*10)/4);
-    this.speed = Math.round(Math.random()*500) + 300;
     // 敌人的图片或者雪碧图，用一个我们提供的工具函数来轻松的加载文件
-    this.x = -50;
-    this.y = 60 + (this.column*83);
+    setEnemy(this);
     this.sprite = 'images/enemy-bug.png';
 };
 
+Enemy.prototype = Object.create(GameObject.prototype);
+Enemy.prototype.constructor = allEnemies;
 // 此为游戏必须的函数，用来更新敌人的位置
 // 参数: dt ，表示时间间隙
 Enemy.prototype.update = function(dt) {
@@ -18,10 +38,7 @@ Enemy.prototype.update = function(dt) {
     this.x += this.speed * dt;
     //判斷是否超出邊界，超出後將位置移回左邊，並且隨機生在其他列。
     if(this.x > 606) {
-        this.column = Math.round((Math.random()*10)/4);
-        this.speed = Math.round(Math.random()*400) + 300;
-        this.y = 60 + (this.column*83);
-        this.x = -50;
+        setEnemy(this);
     }
 };
 
@@ -35,33 +52,34 @@ Enemy.prototype.Collisions = function() {
     }
 };
 
-// 此为游戏必须的函数，用来在屏幕上画出敌人，
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
 
+
+//設置敵人的位置
+var setEnemy = function(enemy) {
+    enemy.column = Math.round((Math.random()*10)/4);
+    enemy.speed = Math.round(Math.random()*500) + 300;
+    enemy.x = -50;
+    enemy.y = 60 + (enemy.column*83);
+};
 // 现在实现你自己的玩家类
 // 这个类需要一个 update() 函数， render() 函数和一个 handleInput()函数
 var Player = function() {
-    this.x = 202;
-    this.y = 392;
+    this.x = coordinates.origin_X;
+    this.y = coordinates.origin_Y;
     this.sprite = 'images/char-boy.png';
 };
 
 //重置玩家位置
 var replacePlayer = function() {
-    player.x = 202;
-    player.y = 392;
+    player.x = coordinates.origin_X;
+    player.y = coordinates.origin_Y;
 };
 
-//將玩家的原型委託至敵人的原型
-Player.prototype = Object.create(Enemy.prototype);
+//將玩家的原型委託至遊戲物件的原型
+Player.prototype = Object.create(GameObject.prototype);
 
 //更改玩家的constructor
 Player.prototype.constructor = player;
-
-Player.prototype.update = function() {
-}
 
 //處理玩家的輸入
 Player.prototype.handleInput = function(getInput) {
@@ -69,36 +87,36 @@ Player.prototype.handleInput = function(getInput) {
     switch (getInput)
     {
         case 'left':
-            if(this.x > 0) {
-                this.x -= 101;
+            if(this.x > coordinates.border_Left) {
+                this.x -= coordinates.horizontal_Step;
         }
             break;
 
         case 'right':
-            if(this.x < 404) {
-                this.x += 101;
+            if(this.x < coordinates.border_Right) {
+                this.x += coordinates.horizontal_Step;
         }
             break;
 
         //判斷如果下一層就是河流，就執行過河的函數
         case 'up':
-            if(this.y === 60) {
+            if(this.y === coordinates.border_Up) {
                 cross();
         }
-            if(this.y > 60) {
-                this.y -= 83;
+            if(this.y > coordinates.border_Up) {
+                this.y -= coordinates.vertical_Step;
         }
             break;
 
         case 'down':
-            if(this.y < 392) {
-                this.y += 83;
+            if(this.y < coordinates.border_Bottom) {
+                this.y += coordinates.vertical_Step;
         }
             break;
     }
 };
 
-//寶石的函數
+//定義寶石的函數
 var Gem = function() {
     this.column = Math.round((Math.random()*10)/3);
     this.row = Math.round((Math.random()*10)/2);
@@ -120,11 +138,8 @@ var Gem = function() {
 };
 
 //寶石的原型設定
-Gem.prototype = Object.create(Enemy.prototype);
+Gem.prototype = Object.create(GameObject.prototype);
 Gem.prototype.constructor = allGems;
-Gem.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
 
 //寶石的取得判定
 Gem.prototype.getPoints = function() {
@@ -139,8 +154,6 @@ Gem.prototype.getPoints = function() {
         }
     }
 };
-Gem.prototype.update = function() {
-}
 
 //過河函數
 var cross = function() {
