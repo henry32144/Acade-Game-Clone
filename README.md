@@ -1,7 +1,7 @@
 
 Arcade-Game-Clone
 ===============================
-[English Version](https://github.com/henry32144/Arcade-Game-Clone/blob/master/README(en).md)
+[English Version](https://github.com/henry32144/arcade-game-clone/blob/master/README(en).md)
 
 遊戲介紹
 ==============================
